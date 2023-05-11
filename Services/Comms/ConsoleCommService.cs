@@ -4,7 +4,7 @@ using ConfluencePrototype.Models.Players;
 
 namespace ConfluencePrototype.Services.Comms
 {
-    internal class ConsoleCommService : ICommService
+    public class ConsoleCommService : ICommService
     {
         public int GetLambdaIndexFromHand(Player targetPlayer)
         {
@@ -34,8 +34,13 @@ namespace ConfluencePrototype.Services.Comms
             };
         }
 
-        public bool PlayLambdaFromHand()
+        public bool PlayLambdaFromHand(Player player)
         {
+            if(!player.Hand.Cards.Any(card => card.Type == CardType.Lambda))
+            {
+                return false;
+            }
+
             Console.WriteLine("Play Lambda from hand on this slot? Y/N");
             var input = Console.Read();
             return (input == 'Y');

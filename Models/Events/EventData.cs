@@ -1,6 +1,6 @@
 ﻿namespace ConfluencePrototype.Models
 {
-    internal abstract class EventData
+    public abstract class EventData
     {
     }
 }

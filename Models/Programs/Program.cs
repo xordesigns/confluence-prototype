@@ -2,7 +2,7 @@
 
 namespace ConfluencePrototype.Models.Programs
 {
-    internal class Program
+    public class Program
     {
         public List<Slot> Slots;
         public Player Owner;
@@ -13,7 +13,11 @@ namespace ConfluencePrototype.Models.Programs
 
             for (int i = 1; i <= numberOfSlots; i++)
             {
-                slots.Add(new Slot(new Coords(numberOfSlots, i)));
+                slots.Add(new Slot
+                (
+                    coords: new Coords(numberOfSlots, i),
+                    owner: owner
+                ));
             }
 
             Slots = slots;

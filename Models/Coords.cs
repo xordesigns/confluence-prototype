@@ -1,6 +1,6 @@
 ﻿namespace ConfluencePrototype.Models
 {
-    internal struct Coords
+    public struct Coords
     {
         public int Program;
         public int Slot;

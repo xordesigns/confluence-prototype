@@ -3,7 +3,7 @@ using Prog = ConfluencePrototype.Models.Programs.Program;
 
 namespace ConfluencePrototype.Models
 {
-    internal class Match
+    public class Match
     {
         public readonly Player PlayerOne;
         public readonly Player PlayerTwo;
@@ -20,6 +20,10 @@ namespace ConfluencePrototype.Models
         public Prog PlayerTwoP2 => this.AllPrograms[4];
         public Prog PlayerTwoP3 => this.AllPrograms[5];
 
+        public int RoundNumber;
+
+        public List<List<MatchEvent>> EventsPerRound;
+
         public Match(Player playerOne, Player playerTwo)
         {
             this.PlayerOne = playerOne;
@@ -33,12 +37,17 @@ namespace ConfluencePrototype.Models
             {
                 this.AllPrograms[i] = new Prog((i % 3) + 1, i > 2 ? playerOne : playerTwo);
             }
+
+            this.RoundNumber = 1;
+
+            this.EventsPerRound = new();
+            this.EventsPerRound.Add(new());
         }
 
-        public void HandleEvent(string message)
+        public void HandleEvent(MatchEvent newEvent)
         {
-            // TODO placeholder implementation
-            Console.WriteLine(message);
+            this.EventsPerRound[this.RoundNumber].Add(newEvent);
+            Console.WriteLine(newEvent.Message);
         }
     }
 }

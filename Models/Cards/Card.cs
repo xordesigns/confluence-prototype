@@ -3,7 +3,7 @@ using ConfluencePrototype.Models.Players;
 
 namespace ConfluencePrototype.Models.Cards
 {
-    internal abstract class Card
+    public abstract class Card
     {
         public readonly string Name;
         public readonly CardType Type;

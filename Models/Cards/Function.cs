@@ -3,7 +3,7 @@ using ConfluencePrototype.Models.Players;
 
 namespace ConfluencePrototype.Models.Cards
 {
-    internal class Function : Card
+    public class Function : Card
     {
         public readonly FunctionSubtype? Subtype;
         public readonly CardEffect InterruptEffect;

@@ -5,5 +5,6 @@
         Hand,
         Trash,
         Deck,
+        Slot
     }
 }

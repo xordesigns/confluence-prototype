@@ -2,9 +2,9 @@
 
 namespace ConfluencePrototype.Services.Comms
 {
-    internal interface ICommService
+    public interface ICommService
     {
-        public bool PlayLambdaFromHand();
+        public bool PlayLambdaFromHand(Player targetPlayer);
         public int GetLambdaIndexFromHand(Player targetPlayer);
     }
 }

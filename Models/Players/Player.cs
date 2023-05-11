@@ -3,21 +3,21 @@ using ConfluencePrototype.Models.Cards;
 
 namespace ConfluencePrototype.Models.Players
 {
-    internal class Player
+    public class Player
     {
         public string Name;
 
-        public Zone Hand;
-        public Zone Deck;
-        public Zone Trash;
+        public Hand Hand;
+        public Deck Deck;
+        public Trash Trash;
 
-        public Player(string name)
+        public Player(string name, List<Card> deck)
         {
             this.Name = name;
 
-            this.Hand = new(ZoneType.Hand, new List<Card>());
-            this.Deck = new(ZoneType.Deck, new List<Card>());
-            this.Trash = new(ZoneType.Trash, new List<Card>());
+            this.Hand = new();
+            this.Deck = new(deck);
+            this.Trash = new();
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using ConfluencePrototype.Services.Comms;
+﻿using ConfluencePrototype.Models.Players;
+using ConfluencePrototype.Services.Comms;
 
 namespace ConfluencePrototype.Models.Cards
 {
-    internal class CardEffect
+    public class CardEffect
     {
-        public delegate void CardEffectDelegate(ICommService commService, int slotNumber);
+        public delegate void CardEffectDelegate(Match match, Player sourcePlayer, ICommService commService, int slotNumber);
 
         public readonly int StartSlot;
         public readonly int EndSlot;
@@ -19,9 +20,9 @@ namespace ConfluencePrototype.Models.Cards
             this.Effect = effect;
         }
 
-        public void ExecuteEffect(ICommService commService, int installedSlotNumber = -1)
+        public void Execute(Match match, Player sourcePlayer, ICommService commService, int slotNumber = -1)
         {
-           this.Effect.Invoke(commService, installedSlotNumber);
+           this.Effect.Invoke(match, sourcePlayer, commService, slotNumber);
         }
     }
 }

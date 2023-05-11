@@ -1,11 +1,13 @@
 ﻿using ConfluencePrototype.Enums;
+using ConfluencePrototype.Helpers;
 using ConfluencePrototype.Models.Cards;
 using ConfluencePrototype.Models.Players;
 using ConfluencePrototype.Services.Comms;
 
 namespace ConfluencePrototype.Models.Programs
 {
-    internal class Slot
+    public class Slot
+        : IZone
     {
         public Coords Coords;
         public Card? Lambda;
@@ -15,6 +17,8 @@ namespace ConfluencePrototype.Models.Programs
         public readonly Player Owner;
 
         public Card? InstalledCard => this.Lambda ?? this.Function;
+
+        public ZoneType Type => ZoneType.Slot;
 
         public Slot(Coords coords, Player owner)
         {
@@ -26,34 +30,80 @@ namespace ConfluencePrototype.Models.Programs
             this.Owner = owner;
         }
 
-        public bool Execute(ICommService commService)
+        public void Execute(Match match, ICommService commService)
         {
-            var playLambdaFromHand = commService.PlayLambdaFromHand();
+            bool playLambdaFromHand = commService.PlayLambdaFromHand(this.Owner);
 
-            if (playLambdaFromHand
-                && commService.GetLambdaIndexFromHand(this.Owner) is not -1)
+            if (playLambdaFromHand)
             {
+                var selectedLambdaIndex = commService.GetLambdaIndexFromHand(this.Owner);
 
+                var targetLambda = this.Owner.Hand.Cards[selectedLambdaIndex];
+
+                Effects.Trash(match, this.Owner, this, targetLambda);
+
+                Effects.Execute(match, commService, targetLambda, this.Owner, this.Coords);
+
+                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
             }
             else
             {
-                this.ExecuteInstalled(commService);
+                this.ExecuteInstalled(match, commService);
             }
         }
 
-        private void ExecuteInstalled(ICommService commService)
+        private void ExecuteInstalled(Match match, ICommService commService)
         {
             if (this.InstalledCard?.Type == CardType.Lambda)
             {
-                this.InstalledCard.BaseEffect.ExecuteEffect(commService);
-                this.InstalledCard.Effect?.ExecuteEffect(commService, this.Coords.Slot);
-                this.Interrupt?.InterruptEffect.ExecuteEffect(commService);
+                Effects.Execute(match, commService, this.InstalledCard, this.Owner, this.Coords);
+                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
             }
             else
             {
-                this.Interrupt?.InterruptEffect.ExecuteEffect(commService);
-                this.InstalledCard?.Effect?.ExecuteEffect(commService, this.Coords.Slot);
+                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+                Effects.Execute(match, commService, this.InstalledCard, this.Owner, this.Coords);
             }
+        }
+
+        public void Add(Card card)
+        {
+            if (card is Function func)
+            {
+                if (func.Owner != this.Owner)
+                {
+                    this.Interrupt = func;
+                }
+                else
+                {
+                    this.Function = func;
+                }
+            }
+            else
+            {
+                this.Lambda = card;
+            }
+        }
+
+        public bool Remove(Card card)
+        {
+            if (card.Owner != this.Owner)
+            {
+                this.Interrupt = null;
+            }
+            else
+            {
+                if (card.Type == CardType.Function)
+                {
+                    this.Function = null;
+                }
+                else
+                {
+                    this.Lambda = null;
+                }
+            }
+
+            return true;
         }
     }
 }

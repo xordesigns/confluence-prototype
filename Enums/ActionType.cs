@@ -3,10 +3,12 @@
     public enum ActionType
     {
         Draw,
+        Execute,
         Install,
-        Trash,
-        Terminate,
+        InstallInterrupt,
+        Move,
         Play,
-        Move
+        Terminate,
+        Trash,
     }
 }

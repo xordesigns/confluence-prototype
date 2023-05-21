@@ -1,4 +1,5 @@
 ﻿using ConfluencePrototype.Models.Players;
+using ConfluencePrototype.Models.Programs;
 using Prog = ConfluencePrototype.Models.Programs.Program;
 
 namespace ConfluencePrototype.Models
@@ -40,14 +41,21 @@ namespace ConfluencePrototype.Models
 
             this.RoundNumber = 1;
 
-            this.EventsPerRound = new();
-            this.EventsPerRound.Add(new());
+            this.EventsPerRound = new()
+            {
+                new()
+            };
         }
 
         public void HandleEvent(MatchEvent newEvent)
         {
             this.EventsPerRound[this.RoundNumber].Add(newEvent);
             Console.WriteLine(newEvent.Message);
+        }
+
+        public Slot GetSlotFromCoords(Player owner, Coords coords)
+        {
+
         }
     }
 }

@@ -5,14 +5,14 @@ namespace ConfluencePrototype.Models
 {
     public class MatchEvent
     {
-        public readonly ActionType Type;
+        public readonly EffectType Type;
         public readonly Player Source;
 
         public readonly EventData Data;
 
         public readonly string Message;
 
-        public MatchEvent(ActionType type, Player source, EventData data, string message)
+        public MatchEvent(EffectType type, Player source, EventData data, string message)
         {
             this.Type = type;
             this.Source = source;

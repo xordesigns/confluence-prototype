@@ -1,11 +1,13 @@
 ﻿namespace ConfluencePrototype.Enums
 {
-    public enum ActionType
+    public enum EffectType
     {
         Draw,
+        Execute,
         Install,
         InstallInterrupt,
-        TrashInterrupt,
-        RunProgram
+        Move,
+        Terminate,
+        Trash,
     }
 }

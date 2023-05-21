@@ -36,7 +36,7 @@ namespace ConfluencePrototype.Models.Programs
 
             if (playLambdaFromHand)
             {
-                var selectedLambdaIndex = commService.GetLambdaIndexFromHand(this.Owner);
+                var selectedLambdaIndex = commService.GetCardIndexFromHand(this.Owner, CardType.Lambda);
 
                 var targetLambda = this.Owner.Hand.Cards[selectedLambdaIndex];
 

@@ -1,10 +1,5 @@
 ﻿using ConfluencePrototype.Models.Cards;
 using ConfluencePrototype.Models.Programs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConfluencePrototype.Models.Events
 {

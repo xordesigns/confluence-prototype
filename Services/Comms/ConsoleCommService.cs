@@ -1,26 +1,33 @@
 ﻿using ConfluencePrototype.Enums;
-using ConfluencePrototype.Helpers;
+using ConfluencePrototype.Models;
 using ConfluencePrototype.Models.Players;
+using System.Text.RegularExpressions;
 
 namespace ConfluencePrototype.Services.Comms
 {
     public class ConsoleCommService : ICommService
     {
-        public int GetLambdaIndexFromHand(Player targetPlayer)
+        public int GetCardIndexFromHand(Player targetPlayer, CardType? targetType = null)
         {
-            var lambdasFromHand = targetPlayer.Hand.Cards
+            var filteredCards = targetPlayer.Hand.Cards
                 .Select((card, index) => new { Index = index, Card = card })
-                .Where(card => card.Card.Type == CardType.Lambda)
                 .ToList();
 
-            if (lambdasFromHand.Count < 1)
+            if (targetType is not null)
+            {
+                filteredCards = filteredCards
+                    .Where(card => card.Card.Type == targetType)
+                    .ToList();
+            }
+
+            if (filteredCards.Count < 1)
             {
                 return -1;
             }
 
             Console.WriteLine($"Choose a card number:");
 
-            foreach (var lambda in lambdasFromHand)
+            foreach (var lambda in filteredCards)
             {
                 Console.WriteLine($"{lambda.Index}: {lambda.Card.Name}");
             }
@@ -32,6 +39,28 @@ namespace ConfluencePrototype.Services.Comms
                 >= 0 when input < targetPlayer.Hand.Cards.Count => input,
                 _ => -1
             };
+        }
+
+        public Coords GetSlotCoordinates(Player targetPlayer)
+        {
+            var coordsPattern = new Regex(@"(\d)\\/(\d)");
+
+            while (true)
+            {
+                Console.WriteLine("Input target slot in the format X/Y:");
+                var match = coordsPattern.Match(Console.ReadLine());
+
+                if (match is null)
+                {
+                    continue;
+                }
+                else
+                {
+                    int program = int.Parse(match.Groups[0].Value);
+                    int slot = int.Parse(match.Groups[1].Value);
+                    return new Coords(program, slot);
+                }
+            }
         }
 
         public bool PlayLambdaFromHand(Player player)

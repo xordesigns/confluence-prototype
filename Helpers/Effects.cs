@@ -45,7 +45,7 @@ namespace ConfluencePrototype.Helpers
 
         public static void Trash(Match match, Player sourcePlayer, IZone sourceZone, Card targetCard)
         {
-            Move(match, sourcePlayer, sourceZone, sourcePlayer.Trash, targetCard);
+            Move(match, sourcePlayer, sourceZone, targetCard.Owner.Trash, targetCard);
 
             var trashEvent = new MatchEvent
             (
@@ -122,7 +122,7 @@ namespace ConfluencePrototype.Helpers
                 type: EffectType.Execute,
                 source: sourcePlayer,
                 data: new ExecuteEventData(targetCard, slotCoords),
-                message: $"Player {sourcePlayer.Name} executed {targetCard}@{slotCoords.Slot}"
+                message: $"Player {sourcePlayer.Name} executed {targetCard.Name}@{slotCoords.Program}/{slotCoords.Slot}"
             );
 
             match.HandleEvent(executeEvent);

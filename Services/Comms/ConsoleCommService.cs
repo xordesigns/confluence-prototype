@@ -1,5 +1,6 @@
 ﻿using ConfluencePrototype.Enums;
 using ConfluencePrototype.Models;
+using ConfluencePrototype.Models.Cards;
 using ConfluencePrototype.Models.Players;
 using System.Text.RegularExpressions;
 
@@ -41,9 +42,79 @@ namespace ConfluencePrototype.Services.Comms
             };
         }
 
-        public Coords GetSlotCoordinates(Player targetPlayer)
+        public int GetCardIndexFromList(List<Card> cardList)
+        {
+            Console.WriteLine("Please select a card index from this list:");
+            for (int i = 0; i < cardList.Count; i++)
+            {
+                Console.WriteLine($"{i}. {cardList[i].Name}");
+            }
+
+            int index = -1;
+
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out index))
+                {
+                    break;
+                }
+            }
+
+            return index;
+        }
+
+        public Coords GetInterruptSlotCoordinates(Player targetPlayer)
         {
             var coordsPattern = new Regex(@"(\d)\\/(\d)");
+
+            while (true)
+            {
+                Console.WriteLine("Input target slot 2 or 3 from a program in the format X/Y:");
+                var match = coordsPattern.Match(Console.ReadLine());
+
+                if (match is null)
+                {
+                    continue;
+                }
+                else
+                {
+                    int program = int.Parse(match.Groups[0].Value);
+                    int slot = int.Parse(match.Groups[1].Value);
+
+                    if (Coords.AreInterruptCoordsValid(program, slot) is false)
+                    {
+                        continue;
+                    }
+
+                    return new Coords(targetPlayer.Id, program, slot);
+                }
+            }
+        }
+
+        public int GetProgramIndex()
+        {
+            Console.WriteLine("Please input a program number:");
+
+            int index = -1;
+
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out index))
+                {
+                    if (index is > 3 or < 1){
+                        continue;
+                    }
+                    
+                    break;
+                }
+            }
+
+            return index;
+        }
+
+        public Coords GetSlotCoordinates(Player targetPlayer)
+        {
+            var coordsPattern = new Regex(@"(\d)/(\d)");
 
             while (true)
             {
@@ -56,9 +127,9 @@ namespace ConfluencePrototype.Services.Comms
                 }
                 else
                 {
-                    int program = int.Parse(match.Groups[0].Value);
-                    int slot = int.Parse(match.Groups[1].Value);
-                    return new Coords(program, slot);
+                    int program = int.Parse(match.Groups[1].Value);
+                    int slot = int.Parse(match.Groups[2].Value);
+                    return new Coords(targetPlayer.Id, program, slot);
                 }
             }
         }

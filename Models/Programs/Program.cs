@@ -1,4 +1,5 @@
 ﻿using ConfluencePrototype.Models.Players;
+using ConfluencePrototype.Services.Comms;
 
 namespace ConfluencePrototype.Models.Programs
 {
@@ -15,13 +16,21 @@ namespace ConfluencePrototype.Models.Programs
             {
                 slots.Add(new Slot
                 (
-                    coords: new Coords(numberOfSlots, i),
+                    coords: new Coords(owner.Id, numberOfSlots, i),
                     owner: owner
                 ));
             }
 
             Slots = slots;
             Owner = owner;
+        }
+
+        public void Execute(Match match, ICommService commService)
+        {
+            foreach (var slot in this.Slots)
+            {
+                slot.Execute(match, commService);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace ConfluencePrototype.Helpers
             return origin.Where(card => card?.Type == type);
         }
 
-        public static IEnumerable<Function> InterruptsForPlayer(Match match, Player player)
+        public static IEnumerable<Card> InterruptsForPlayer(Match match, Player player)
         {
             var interrupts = match.AllPrograms
                 .SelectMany(prog => prog.Slots)

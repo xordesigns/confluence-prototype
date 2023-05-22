@@ -1,4 +1,5 @@
-﻿using ConfluencePrototype.Models.Players;
+﻿using ConfluencePrototype.Data.Builders;
+using ConfluencePrototype.Models.Players;
 using ConfluencePrototype.Models.Programs;
 using Prog = ConfluencePrototype.Models.Programs.Program;
 
@@ -6,8 +7,7 @@ namespace ConfluencePrototype.Models
 {
     public class Match
     {
-        public readonly Player PlayerOne;
-        public readonly Player PlayerTwo;
+        public readonly Player[] Players;
 
         public Player Active;
 
@@ -25,18 +25,26 @@ namespace ConfluencePrototype.Models
 
         public List<List<MatchEvent>> EventsPerRound;
 
-        public Match(Player playerOne, Player playerTwo)
+        public Match(string playerOneName, List<string> playerOneDecklist, string playerTwoName, List<string> playerTwoDecklist)
         {
-            this.PlayerOne = playerOne;
-            this.PlayerTwo = playerTwo;
+            this.Players = new Player[2]
+            {
+                new Player(0, playerOneName, new()),
+                new Player(1, playerTwoName, new())
+            };
 
-            this.Active = this.PlayerOne;
+            this.Players[0].Deck.Cards = CardMapping.GetCardsFromDecklist(this.Players[0], playerOneDecklist);
+            this.Players[1].Deck.Cards = CardMapping.GetCardsFromDecklist(this.Players[1], playerTwoDecklist);
+
+            this.Active = this.Players[0];
 
             this.AllPrograms = new Prog[6];
 
             for (int i = 0; i < this.AllPrograms.Length; i++)
             {
-                this.AllPrograms[i] = new Prog((i % 3) + 1, i > 2 ? playerOne : playerTwo);
+                this.AllPrograms[i] = new Prog(
+                    numberOfSlots: (i % 3) + 1, 
+                    owner: i > 2 ? this.Players[1] : this.Players[0]);
             }
 
             this.RoundNumber = 1;
@@ -49,13 +57,19 @@ namespace ConfluencePrototype.Models
 
         public void HandleEvent(MatchEvent newEvent)
         {
-            this.EventsPerRound[this.RoundNumber].Add(newEvent);
+            this.EventsPerRound[this.RoundNumber - 1].Add(newEvent);
             Console.WriteLine(newEvent.Message);
         }
 
-        public Slot GetSlotFromCoords(Player owner, Coords coords)
+        public Prog GetProgramFromNumber(Player owner, int programNumber)
         {
+            return this.AllPrograms[(owner.Id * 2) + (programNumber - 1)];
+        }
 
+        public Slot GetSlotFromCoords(Coords coords)
+        {
+            var owner = this.Players[coords.PlayerId];
+            return this.GetProgramFromNumber(owner, coords.Program).Slots[coords.Slot - 1];
         }
     }
 }

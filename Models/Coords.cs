@@ -2,24 +2,27 @@
 {
     public struct Coords
     {
-        public int Program;
-        public int Slot;
+        public readonly int PlayerId;
+        public readonly int Program;
+        public readonly int Slot;
 
-        public Coords(int program, int slot)
+        public Coords(int playerId, int program, int slot)
         {
             if (AreCoordsValid(program, slot))
             {
+                this.PlayerId = playerId;
                 this.Program = program;
                 this.Slot = slot;
             }
             else
             {
+                this.PlayerId = playerId;
                 this.Program = 1;
                 this.Slot = 1;
             }
         }
 
-        private static bool AreCoordsValid(int program, int slot)
+        public static bool AreCoordsValid(int program, int slot)
         {
             if (program is > 3 or < 1)
             {
@@ -35,9 +38,15 @@
             };
         }
 
+        public static bool AreInterruptCoordsValid(int program, int slot)
+        {
+            return program is not > 3 and not < 2
+                && slot >= 2;
+        }
+
         public override string ToString()
         {
-            return $"P{this.Program}/{this.Slot}";
+            return $"[Player {this.PlayerId}]P{this.Program}/{this.Slot}";
         }
 
     }

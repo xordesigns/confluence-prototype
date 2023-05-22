@@ -1,12 +1,15 @@
 ﻿using ConfluencePrototype.Data.Builders;
 using ConfluencePrototype.Models.Players;
 using ConfluencePrototype.Models.Programs;
+using ConfluencePrototype.Services.Comms;
 using Prog = ConfluencePrototype.Models.Programs.Program;
 
 namespace ConfluencePrototype.Models
 {
     public class Match
     {
+        private readonly ICommService _commService;
+
         public readonly Player[] Players;
 
         public Player Active;
@@ -25,7 +28,9 @@ namespace ConfluencePrototype.Models
 
         public List<List<MatchEvent>> EventsPerRound;
 
-        public Match(string playerOneName, List<string> playerOneDecklist, string playerTwoName, List<string> playerTwoDecklist)
+        public Match(string playerOneName, List<string> playerOneDecklist,
+            string playerTwoName, List<string> playerTwoDecklist,
+            ICommService commService)
         {
             this.Players = new Player[2]
             {
@@ -53,6 +58,29 @@ namespace ConfluencePrototype.Models
             {
                 new()
             };
+
+            this._commService = commService;
+        }
+
+        private void RunTurnForPlayer()
+        {
+            Console.WriteLine($"Player {this.Active.Name}'s turn");
+            while(this.Active.Memory > 0)
+            {
+                Console.WriteLine($"Memory: {this.Active.Memory}");
+                Console.WriteLine($"{string.Join(',', this.Active.Hand.Cards.Select(card => card.Name))}");
+                this._commService.PerformDefaultAction(this, this.Active);
+            }
+        }
+
+        public void RunMatch()
+        {
+            while (true)
+            {
+                this.RunTurnForPlayer();
+                this.Active.Memory = 5;
+                this.Active = this.Players[(this.Active.Id + 1) % 2];
+            }
         }
 
         public void HandleEvent(MatchEvent newEvent)

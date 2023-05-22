@@ -10,27 +10,25 @@ namespace ConfluencePrototype
         {
             var commService = new ConsoleCommService();
 
-            var testDecklist = new List<string>();
-
-            Random rand = new();
-
-            for (int i = 0; i < 20; i++)
+            var testDecklist = new List<string>
             {
-                if (rand.Next(2) > 0)
-                {
-                    testDecklist.Add("Obelisk");
-                }
-                else
-                {
-                    testDecklist.Add("Fetch");
-                }
+                "Obelisk",
+                "Struct",
+                "Fetch"
+            };
+
+            for (int i = 0; i < 5; i++)
+            {
+                testDecklist.AddRange(testDecklist);
             }
 
-            Match match = new ("Dacko", testDecklist, "Damjan", testDecklist);
+            Match match = new ("Dacko", testDecklist, "Damjan", testDecklist, commService);
 
-            DefaultActions.Draw(match, match.Players[0], commService);
-            DefaultActions.Install(match, match.Players[0], commService);
-            DefaultActions.RunProgram(match, match.Players[0], commService);
+            match.RunMatch();
+
+            //DefaultActions.Draw(match, match.Players[0], commService);
+            //DefaultActions.Install(match, match.Players[0], commService);
+            //DefaultActions.RunProgram(match, match.Players[0], commService);
         }
     }
 }

@@ -3,6 +3,7 @@ using ConfluencePrototype.Models;
 using ConfluencePrototype.Models.Cards;
 using ConfluencePrototype.Models.Players;
 using System.Text.RegularExpressions;
+using Match = ConfluencePrototype.Models.Match;
 
 namespace ConfluencePrototype.Services.Comms
 {
@@ -131,6 +132,58 @@ namespace ConfluencePrototype.Services.Comms
                     int slot = int.Parse(match.Groups[2].Value);
                     return new Coords(targetPlayer.Id, program, slot);
                 }
+            }
+        }
+
+        public bool GetYouMayResult(string prompt)
+        {
+            Console.WriteLine($"You may {prompt}. Y/N?");
+
+            var answer = string.Empty;
+
+            while (true)
+            {
+                answer = Console.ReadLine();
+                if (answer!.ToUpper() is "Y" or "N")
+                {
+                    break;
+                }
+            }
+
+            return answer!.ToUpper() == "Y";
+        }
+
+        public void PerformDefaultAction(Match match, Player sourcePlayer)
+        {
+            var defaultActionNames = new List<string>
+            {
+                "Draw",
+                "Install",
+                "InstallInterrupt",
+                "TrashInterrupt",
+                "RunProgram"
+            };
+
+            while (true)
+            {
+                for (int i = 0; i < defaultActionNames.Count; i++)
+                {
+                    Console.WriteLine($"{i}. {defaultActionNames[i]}");
+                }
+
+                if (int.TryParse(Console.ReadLine(), out int index) is false)
+                {
+                    continue;
+                }
+
+                if (index >= sourcePlayer.DefaultActions.Count
+                    || index < 0)
+                {
+                    continue;
+                }
+
+                sourcePlayer.DefaultActions[index].Invoke(match, sourcePlayer, this);
+                return;
             }
         }
 

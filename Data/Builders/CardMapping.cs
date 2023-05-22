@@ -9,12 +9,14 @@ namespace ConfluencePrototype.Data.Builders
         public static readonly Dictionary<string, (CardType type, CardEffect effect)> CardNameToCardEffect = new()
         {
             { "Obelisk", (CardType.Function, Effects.FunctionEffects.Obelisk) },
+            { "Struct", (CardType.Function, Effects.FunctionEffects.Struct) },
             { "Fetch", (CardType.Lambda, Effects.LambdaEffects.Fetch) },
         };
 
         public static readonly Dictionary<string, CardEffect> FunctionNameToInterruptEffect = new()
         {
             { "Obelisk", Effects.InterruptEffects.Placeholder },
+            { "Struct", Effects.InterruptEffects.Placeholder },
         };
 
         public static List<Card> GetCardsFromDecklist(Player owner, List<string> decklist)

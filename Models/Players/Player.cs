@@ -21,7 +21,7 @@ namespace ConfluencePrototype.Models.Players
             this.Id = id;
             this.Name = name;
 
-            this.Memory = 10;
+            this.Memory = 5;
 
             this.Hand = new();
             this.Deck = new(deck);

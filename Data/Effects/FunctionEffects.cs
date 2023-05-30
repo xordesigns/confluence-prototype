@@ -1,6 +1,6 @@
 ﻿using ConfluencePrototype.Helpers;
 using ConfluencePrototype.Models.Cards;
-using System.Runtime.Versioning;
+using ConfluencePrototype.Models;
 using static ConfluencePrototype.Helpers.Effects;
 
 namespace ConfluencePrototype.Data.Effects
@@ -12,11 +12,11 @@ namespace ConfluencePrototype.Data.Effects
             startSlot: 2,
             endSlot: 3,
             rulesText: "Draw <2/3> cards",
-            effect: (match, sourcePlayer, commService, slotNumber) =>
+            effect: (match, sourcePlayer, commService, coords) =>
                 {
-                    if (slotNumber is 2 or 3)
+                    if (coords.Slot is 2 or 3)
                     {
-                        for (int i = 0; i < slotNumber; i++)
+                        for (int i = 0; i < coords.Slot; i++)
                         {
                             var topCard = sourcePlayer.Deck.Cards[0];
                             Draw(match, topCard, sourcePlayer, sourcePlayer.Deck);
@@ -30,7 +30,7 @@ namespace ConfluencePrototype.Data.Effects
             startSlot: 1,
             endSlot: 3,
             rulesText: "You may install a Function from hand. If you do, draw a card.",
-            effect: (match, sourcePlayer, commService, slotNumber) =>
+            effect: (match, sourcePlayer, commService, coords) =>
             {
                 var optionalInstallAnswer = commService.GetYouMayResult("Install a Function from hand");
 
@@ -59,7 +59,7 @@ namespace ConfluencePrototype.Data.Effects
             startSlot: 1,
             endSlot: 3,
             rulesText: "You may install an Interrupt from hand. If you do, draw a card.",
-            effect: (match, sourcePlayer, commService, slotNumber) =>
+            effect: (match, sourcePlayer, commService, coords) =>
             {
                 var optionalInstallAnswer = commService.GetYouMayResult("Install an Interrupt from hand");
 
@@ -88,7 +88,7 @@ namespace ConfluencePrototype.Data.Effects
             startSlot: 1,
             endSlot: 1,
             rulesText: "You may trash a card from hand. If you do, you get $",
-            effect: (match, sourcePlayer, commService, slotNumber) =>
+            effect: (match, sourcePlayer, commService, coords) =>
             {
                 var optionalTrashAnswer = commService.GetYouMayResult("Trash a card from hand");
 
@@ -113,7 +113,7 @@ namespace ConfluencePrototype.Data.Effects
             startSlot: 1,
             endSlot: 3,
             rulesText: "You may trash an unlocked Interrupt",
-            effect: (match, sourcePlayer, commService, slotNumber) =>
+            effect: (match, sourcePlayer, commService, coords) =>
             {
                 var optionalTrashAnswer = commService.GetYouMayResult("Trash an unlocked Interrupt");
 
@@ -135,6 +135,36 @@ namespace ConfluencePrototype.Data.Effects
                     }
 
                     Trash(match, sourcePlayer, sourcePlayer.Trash, allUnlockedInterrupts[interruptIndexToTrash]);
+                }
+            }
+        );
+
+        public static readonly CardEffect MemSpike = new
+        (
+            startSlot: 2,
+            endSlot: 3,
+            rulesText: "You get <$/$$>",
+            effect: (match, sourcePlayer, commService, coords) =>
+            {
+                if (coords.Slot is 2 or 3)
+                {
+                    ChangeMemory(match, sourcePlayer, (coords.Slot - 1));
+                }
+            }
+        );
+
+        public static readonly CardEffect Reflection = new
+        (
+            startSlot: 1,
+            endSlot: 2,
+            rulesText: "Unlock any Interrupt installed on the next slot in this program.",
+            effect: (match, sourcePlayer, commService, coords) =>
+            {
+                if (coords.Slot is 1 or 2)
+                {
+                    var nextSlot = match.GetSlotFromCoords(new Coords(sourcePlayer.Id, coords.Program, coords.Slot + 1));
+
+                    nextSlot.InterruptLocked = false;
                 }
             }
         );

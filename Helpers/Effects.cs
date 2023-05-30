@@ -117,7 +117,7 @@ namespace ConfluencePrototype.Helpers
                 return;
             }
 
-            targetCard.Effect.Execute(match, sourcePlayer, commService, slotCoords.Slot);
+            targetCard.Effect.Execute(match, sourcePlayer, commService, slotCoords);
 
             var executeEvent = new MatchEvent
             (

@@ -5,7 +5,7 @@ namespace ConfluencePrototype.Models.Cards
 {
     public class CardEffect
     {
-        public delegate void CardEffectDelegate(Match match, Player sourcePlayer, ICommService commService, int slotNumber);
+        public delegate void CardEffectDelegate(Match match, Player sourcePlayer, ICommService commService, Coords coords);
 
         public readonly int StartSlot;
         public readonly int EndSlot;
@@ -20,9 +20,9 @@ namespace ConfluencePrototype.Models.Cards
             this.Effect = effect;
         }
 
-        public void Execute(Match match, Player sourcePlayer, ICommService commService, int slotNumber = -1)
+        public void Execute(Match match, Player sourcePlayer, ICommService commService, Coords coords)
         {
-           this.Effect.Invoke(match, sourcePlayer, commService, slotNumber);
+           this.Effect.Invoke(match, sourcePlayer, commService, coords);
         }
     }
 }

@@ -62,6 +62,9 @@ namespace ConfluencePrototype.Models.Programs
             else
             {
                 this.ExecuteInterrupt(match, commService);
+
+                if (this.InterruptLocked) { return; }
+
                 Effects.Execute(match, commService, this.InstalledCard, this.Owner, this.Coords);
             }
         }
@@ -96,6 +99,7 @@ namespace ConfluencePrototype.Models.Programs
             if (card.Owner != this.Owner)
             {
                 this.Interrupt = null;
+                this.InterruptLocked = false;
             }
             else
             {

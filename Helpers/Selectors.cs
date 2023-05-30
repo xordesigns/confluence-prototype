@@ -21,7 +21,7 @@ namespace ConfluencePrototype.Helpers
         public static IEnumerable<Card> AllInstalledForPlayer(Match match, Player player)
         {
             return InstalledNonInteruptForPlayer(match, player)
-                .Concat(InterruptsForPlayer(match, player));
+                .Concat(AllInterruptsForPlayer(match, player));
         }
 
         public static IEnumerable<Card> AllInstalled(Match match)
@@ -42,11 +42,23 @@ namespace ConfluencePrototype.Helpers
             return origin.Where(card => card?.Type == type);
         }
 
-        public static IEnumerable<Card> InterruptsForPlayer(Match match, Player player)
+        public static IEnumerable<Card> AllInterruptsForPlayer(Match match, Player player)
         {
             var interrupts = match.AllPrograms
                 .SelectMany(prog => prog.Slots)
                 .Where(slot => slot.Owner != player)
+                .Select(slot => slot.Interrupt)
+                .OfType<Function>();
+
+            return interrupts;
+        }
+
+        public static IEnumerable<Card> InterruptsForPlayerByState(Match match, Player player, bool isLocked)
+        {
+            var interrupts = match.AllPrograms
+                .SelectMany(prog => prog.Slots)
+                .Where(slot => slot.Owner != player
+                        && slot.InterruptLocked == isLocked)
                 .Select(slot => slot.Interrupt)
                 .OfType<Function>();
 

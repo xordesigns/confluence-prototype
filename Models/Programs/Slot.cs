@@ -13,7 +13,7 @@ namespace ConfluencePrototype.Models.Programs
         public Card? Lambda;
         public Card? Function;
         public Function? Interrupt;
-        public bool IsInterruptLocked;
+        public bool InterruptLocked;
         public readonly Player Owner;
 
         public Card? InstalledCard => this.Lambda ?? this.Function;
@@ -26,7 +26,7 @@ namespace ConfluencePrototype.Models.Programs
             this.Lambda = null;
             this.Function = null;
             this.Interrupt = null;
-            this.IsInterruptLocked = true;
+            this.InterruptLocked = true;
             this.Owner = owner;
         }
 
@@ -44,7 +44,7 @@ namespace ConfluencePrototype.Models.Programs
 
                 Effects.Execute(match, commService, targetLambda, this.Owner, this.Coords);
 
-                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+                this.ExecuteInterrupt(match, commService);
             }
             else
             {
@@ -57,13 +57,19 @@ namespace ConfluencePrototype.Models.Programs
             if (this.InstalledCard?.Type == CardType.Lambda)
             {
                 Effects.Execute(match, commService, this.InstalledCard, this.Owner, this.Coords);
-                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+                this.ExecuteInterrupt(match, commService);
             }
             else
             {
-                Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+                this.ExecuteInterrupt(match, commService);
                 Effects.Execute(match, commService, this.InstalledCard, this.Owner, this.Coords);
             }
+        }
+
+        private void ExecuteInterrupt(Match match, ICommService commService)
+        {
+            Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+            this.InterruptLocked = false;
         }
 
         public void Add(Card card)

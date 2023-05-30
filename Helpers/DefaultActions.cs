@@ -12,7 +12,7 @@ namespace ConfluencePrototype.Helpers
         {
             if (player.Memory > 0)
             {
-                player.Memory -= 1;
+                Effects.ChangeMemory(match, player, -1);
                 Effects.Draw(match, player.Deck.Cards[0], player, player.Deck);
             }
         };
@@ -21,7 +21,7 @@ namespace ConfluencePrototype.Helpers
         {
             if (player.Memory > 0)
             {
-                player.Memory -= 1;
+                Effects.ChangeMemory(match, player, -1);
 
                 var cardIndexToPlay = commService.GetCardIndexFromHand(player);
 
@@ -39,13 +39,13 @@ namespace ConfluencePrototype.Helpers
         {
             if (player.Memory > 0)
             {
-                player.Memory -= 1;
+                Effects.ChangeMemory(match, player, -1);
 
                 var cardIndexToPlay = commService.GetCardIndexFromHand(player, Enums.CardType.Function);
 
                 if (cardIndexToPlay != -1)
                 {
-                    var opponent = match.Players[(player.Id + 1) % 2];
+                    var opponent = match.GetOpponentForPlayer(player);
                     var coords = commService.GetInterruptSlotCoordinates(opponent);
                     var targetSlot = match.GetSlotFromCoords(coords);
                     Effects.InstallInterrupt(match, player.Hand.Cards[cardIndexToPlay], player.Hand, player, targetSlot);
@@ -57,11 +57,11 @@ namespace ConfluencePrototype.Helpers
         {
             if (player.Memory > 0)
             {
-                player.Memory -= 1;
+                Effects.ChangeMemory(match, player, -1);
 
-                var opponent = match.Players[(player.Id + 1) % 2];
+                var opponent = match.GetOpponentForPlayer(player);
 
-                var opponentInstalledInterrupts = Selectors.InterruptsForPlayer(match, opponent)
+                var opponentInstalledInterrupts = Selectors.AllInterruptsForPlayer(match, opponent)
                     .ToList();
 
                 if (opponentInstalledInterrupts.Any())
@@ -78,7 +78,7 @@ namespace ConfluencePrototype.Helpers
 
             if (player.Memory >= programNumber)
             {
-                player.Memory -= programNumber;
+                Effects.ChangeMemory(match, player, -programNumber);
 
                 match.GetProgramFromNumber(player, programNumber).Execute(match, commService);
             }

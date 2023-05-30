@@ -1,4 +1,5 @@
 ﻿using ConfluencePrototype.Data.Builders;
+using ConfluencePrototype.Helpers;
 using ConfluencePrototype.Models.Players;
 using ConfluencePrototype.Models.Programs;
 using ConfluencePrototype.Services.Comms;
@@ -75,6 +76,15 @@ namespace ConfluencePrototype.Models
 
         public void RunMatch()
         {
+            foreach (var player in this.Players)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    var topCard = player.Deck.Cards[0];
+                    Effects.Draw(this, topCard, player, player.Deck);
+                }
+            }
+
             while (true)
             {
                 this.RunTurnForPlayer();
@@ -98,6 +108,11 @@ namespace ConfluencePrototype.Models
         {
             var owner = this.Players[coords.PlayerId];
             return this.GetProgramFromNumber(owner, coords.Program).Slots[coords.Slot - 1];
+        }
+
+        public Player GetOpponentForPlayer(Player sourcePlayer)
+        {
+            return this.Players[(sourcePlayer.Id + 1) % 2];
         }
     }
 }

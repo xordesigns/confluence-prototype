@@ -9,5 +9,6 @@
         Move,
         Terminate,
         Trash,
+        ChangeMemory
     }
 }

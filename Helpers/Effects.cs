@@ -83,7 +83,7 @@ namespace ConfluencePrototype.Helpers
             match.HandleEvent(installEvent);
         }
 
-        public static void InstallInterrupt(Match match, Card targetCard, IZone sourceZone, Player sourcePlayer, Slot targetSlot)
+        public static void InstallInterrupt(Match match, Card targetCard, IZone sourceZone, Player sourcePlayer, Slot targetSlot, bool isLocked = true)
         {
             if (targetSlot.Owner == sourcePlayer)
             {
@@ -97,12 +97,14 @@ namespace ConfluencePrototype.Helpers
 
             Move(match, sourcePlayer, sourceZone, targetSlot, targetCard);
 
+            targetSlot.InterruptLocked = isLocked;
+
             var installEvent = new MatchEvent
             (
                 type: EffectType.InstallInterrupt,
                 source: sourcePlayer,
                 data: new InstallEventData(targetCard, targetSlot),
-                message: $"Player {sourcePlayer.Name} installed {targetCard.Name} as an interrupt in P{targetSlot.Coords.Program}/{targetSlot.Coords.Slot}"
+                message: $"Player {sourcePlayer.Name} installed {targetCard.Name} as a{ (isLocked ? "locked" : "n unlocked")} interrupt in P{targetSlot.Coords.Program}/{targetSlot.Coords.Slot}"
             );
 
             match.HandleEvent(installEvent);
@@ -126,6 +128,21 @@ namespace ConfluencePrototype.Helpers
             );
 
             match.HandleEvent(executeEvent);
+        }
+
+        public static void ChangeMemory(Match match, Player sourcePlayer, int amount)
+        {
+            sourcePlayer.ChangeMemory(amount);
+
+            var memoryChangeEvent = new MatchEvent
+            (
+                type: EffectType.ChangeMemory,
+                source: sourcePlayer,
+                data: new ChangeMemoryEventData(amount),
+                message: $"{sourcePlayer.Name} {(amount > 0 ? "gained" : "lost")} {Math.Abs(amount)} memory. Now at {sourcePlayer.Memory}."
+            );
+
+            match.HandleEvent(memoryChangeEvent);
         }
     }
 }

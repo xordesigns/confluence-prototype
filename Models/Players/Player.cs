@@ -36,5 +36,10 @@ namespace ConfluencePrototype.Models.Players
                 RunProgram
             };
         }
+
+        public void ChangeMemory(int amount)
+        {
+            this.Memory = Math.Clamp((this.Memory + amount), 0, 5);
+        }
     }
 }

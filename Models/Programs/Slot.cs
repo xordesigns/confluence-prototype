@@ -10,8 +10,8 @@ namespace ConfluencePrototype.Models.Programs
         : IZone
     {
         public Coords Coords;
-        public Card? Lambda;
-        public Card? Function;
+        private Card? Lambda;
+        private Card? Function;
         public Function? Interrupt;
         public bool InterruptLocked;
         public readonly Player Owner;
@@ -71,7 +71,7 @@ namespace ConfluencePrototype.Models.Programs
 
         private void ExecuteInterrupt(Match match, ICommService commService)
         {
-            Effects.Execute(match, commService, this.Interrupt, this.Owner, this.Coords);
+            Effects.Execute(match, commService, this.Interrupt, match.GetOpponentForPlayer(this.Owner), this.Coords);
             this.InterruptLocked = false;
         }
 

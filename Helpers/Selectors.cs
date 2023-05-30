@@ -64,5 +64,29 @@ namespace ConfluencePrototype.Helpers
 
             return interrupts;
         }
+
+        public static IEnumerable<Card> AllInstalledFunctionsForPlayer(Match match, Player player)
+        {
+            var functions = match.AllPrograms
+                .SelectMany(prog => prog.Slots)
+                .Where(slot => slot.Owner == player)
+                .Select(slot => slot.InstalledCard)
+                .OfType<Function>();
+
+            return functions;
+        }
+
+        public static IEnumerable<Card> AllFunctionsInColumnForPlayer(Match match, Player player, int column)
+        {
+            var allSlotsForPlayer = match.AllPrograms
+                .SelectMany(prog => prog.Slots)
+                .Where(slot => slot.Owner == player);
+
+            return column switch
+            {
+                1 or 2 or 3 => allSlotsForPlayer.Where(slot => slot.Coords.Slot == column).Select(slot => slot.InstalledCard).OfType<Function>(),
+                _ => throw new Exception("No such column exists!")
+            };
+        }
     }
 }

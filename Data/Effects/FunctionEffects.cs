@@ -168,5 +168,96 @@ namespace ConfluencePrototype.Data.Effects
                 }
             }
         );
+
+        public static readonly CardEffect Voidstar = new
+        (
+            startSlot: 1,
+            endSlot: 3,
+            rulesText: "You may install a Lambda from hand. If you do, draw a card.",
+            effect: (match, sourcePlayer, commService, coords) =>
+            {
+                var optionalInstallAnswer = commService.GetYouMayResult("Install a Lambda from hand");
+
+                if (optionalInstallAnswer)
+                {
+                    var targetLambdaIndexFromHand = commService.GetCardIndexFromHand(sourcePlayer, Enums.CardType.Lambda);
+
+                    if (targetLambdaIndexFromHand < 0)
+                    {
+                        return;
+                    }
+
+                    var targetSlotCoords = commService.GetSlotCoordinates(sourcePlayer);
+
+                    var targetSlot = match.GetSlotFromCoords(targetSlotCoords);
+
+                    Install(match, sourcePlayer.Hand.Cards[targetLambdaIndexFromHand], sourcePlayer.Hand, sourcePlayer, targetSlot);
+
+                    Draw(match, sourcePlayer.Deck.Cards[0], sourcePlayer, sourcePlayer.Deck);
+                }
+            }
+        );
+
+        public static readonly CardEffect Darknes = new
+        (
+            startSlot: 2,
+            endSlot: 3,
+            rulesText: "Each player trashes <1/2> cards from hand.",
+            effect: (match, sourcePlayer, commService, coords) =>
+            {
+                if (coords.Slot is 2 or 3)
+                {
+                    foreach (var player in match.Players)
+                    {
+                        for (int i = 0; i < (coords.Slot - 1); i++)
+                        {
+                            Console.WriteLine($"{player.Name}, choose a card from hand to trash:");
+
+                            var targetCardFromHandIndex = commService.GetCardIndexFromHand(player);
+
+                            if (targetCardFromHandIndex < 0)
+                            {
+                                return;
+                            }
+
+                            Trash(match, player, player.Hand, player.Hand.Cards[targetCardFromHandIndex]);
+                        }
+                    }
+                }
+            }
+        );
+
+        public static readonly CardEffect Killr = new
+        (
+            startSlot: 1,
+            endSlot: 2,
+            rulesText: "You may trash any Function installed in slot 1 of a program.",
+            effect: (match, sourcePlayer, commService, coords) =>
+            {
+                if (coords.Slot is 1 or 2)
+                {
+                    var optionalTrashAnswer = commService.GetYouMayResult("trash any Function installed in slot 1 of a program");
+
+                    if (optionalTrashAnswer)
+                    {
+                        var allOwnerFunctions = Selectors.AllFunctionsInColumnForPlayer(match, sourcePlayer, 1);
+                        var allOpponentFunctions = Selectors.AllFunctionsInColumnForPlayer(match, match.GetOpponentForPlayer(sourcePlayer), 1);
+
+                        var allSlotOneFunctions = allOwnerFunctions
+                                            .Concat(allOpponentFunctions)
+                                            .ToList();
+
+                        var targetFunctionIndex = commService.GetCardIndexFromList(allSlotOneFunctions);
+
+                        if (targetFunctionIndex < 0)
+                        {
+                            return;
+                        }
+
+                        Trash(match, sourcePlayer, sourcePlayer.Trash, allSlotOneFunctions[targetFunctionIndex]);
+                    }
+                }
+            }
+        );
     }
 }

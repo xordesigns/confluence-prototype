@@ -37,7 +37,7 @@ namespace ConfluencePrototype.Helpers
                 type: EffectType.Move,
                 source: sourcePlayer,
                 data: new MoveEventData(source: source, destination: destination, card: card),
-                message: $"Player {sourcePlayer.Name} moved {card.Name} from {source.Type} to {destination.Type}"
+                message: string.Empty //$"Player {sourcePlayer.Name} moved {card.Name} from {source.Type} to {destination.Type}"
             );
 
             match.HandleEvent(moveEvent);

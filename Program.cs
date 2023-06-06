@@ -14,7 +14,13 @@ namespace ConfluencePrototype
             {
                 "Obelisk",
                 "Struct",
-                "Fetch"
+                "Fetch",
+                "Alloc8",
+                "Darknes",
+                "Killr",
+                "Memfree",
+                "MemSpike",
+                "Reflection"
             };
 
             for (int i = 0; i < 5; i++)

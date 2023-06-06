@@ -29,9 +29,9 @@ namespace ConfluencePrototype.Services.Comms
 
             Console.WriteLine($"Choose a card number:");
 
-            foreach (var lambda in filteredCards)
+            foreach (var targetCard in filteredCards)
             {
-                Console.WriteLine($"{lambda.Index}: {lambda.Card.Name}");
+                Console.WriteLine($"{targetCard.Index}: {targetCard.Card.Name}");
             }
 
             _ = int.TryParse(Console.ReadLine(), out var input);
@@ -194,9 +194,15 @@ namespace ConfluencePrototype.Services.Comms
                 return false;
             }
 
-            Console.WriteLine("Play Lambda from hand on this slot? Y/N");
-            var input = Console.Read();
-            return (input == 'Y');
+            string? input = string.Empty;
+
+            while (true)
+            {
+                Console.WriteLine("Play Lambda from hand on this slot? Y/N");
+                input = Console.ReadLine();
+                if (input is not null) { break; }
+            }
+            return input.StartsWith('Y');
         }
     }
 }
